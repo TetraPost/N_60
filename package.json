@@ -1,0 +1,29 @@
+{
+  "name": "app",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "start": "cross-env NODE_PATH=. node ./bin/www"
+  },
+  "dependencies": {
+    "ajv": "^6.12.0",
+    "ajv-error-messages": "^1.0.2",
+    "axios": "^0.19.2",
+    "body-parser": "^1.19.0",
+    "cookie-parser": "^1.4.5",
+    "debug": "~2.6.9",
+    "express": "~4.16.1",
+    "express-session": "^1.17.0",
+    "fs-extra": "^9.0.0",
+    "hbs": "^4.1.0",
+    "helmet": "^3.21.3",
+    "http-errors": "~1.6.3",
+    "jsonwebtoken": "^8.5.1",
+    "mongoose": "^5.9.5",
+    "morgan": "^1.9.1",
+    "multer": "^1.4.2",
+    "nconf": "^0.10.0",
+    "pug": "^2.0.4",
+    "uniqid": "^5.2.0"
+  }
+}

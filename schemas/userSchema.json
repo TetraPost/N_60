@@ -1,0 +1,10 @@
+{
+    "title": "Article content and title",
+    "description": "User post",
+    "type": "object",
+    "properties": {
+      "articleTitle": { "type": "string", "maxLength": 50, "minLength": 1 },
+      "articleContent": { "type": "string", "maxLength": 250, "minLength": 1 },
+      "author": { "type": "string", "maxLength": 250, "minLength": 1 }
+    }
+}

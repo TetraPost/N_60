@@ -1,0 +1,6 @@
+Добавить изменения на гит
+
+$ git add .
+$ git commit -m "Coment"
+$ git push origin master
+

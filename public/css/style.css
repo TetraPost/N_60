@@ -1,0 +1,12 @@
+.error{
+  color: red;
+  font-size: 13px;
+}
+.white{
+    color: aliceblue;
+}
+.commentsList {
+  height: 300px;
+  overflow: scroll;
+  
+}
