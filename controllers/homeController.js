@@ -1,12 +1,11 @@
 const uniqid = require('uniqid');
 const jwt = require('jsonwebtoken');
 const axios = require('axios');
-const tempSign = require('../config/tempSign');
-
+// const tempSign = require('../config/tempSign');
 // const CookieModel = require('../models/cookie.js');
 
 module.exports.index = async function (req, res) {
-  res.render('index', { title: 'Auth N_58'});
+  res.render('index', { title: 'Auth N_60'});
 };
 
 /* Проверяем логин/пароль */
@@ -19,19 +18,18 @@ function checkCretential(data) {
 
 /* Подписываем AccessToken */
 const setToken = async (data) => {
+  const eXp = Math.floor(Date.now() / 1000) + (10);
   const tokenList = {};
-  const accesTime = Math.floor(Date.now() / 1000) + (10);
-  const refreshTime = Math.floor(Date.now() / 1000) + (60);
-  const token = jwt.sign({ id: data.email, name: 'Paul', exp: accesTime }, tempSign.secret);
-  const refresh = jwt.sign({ id: data.email, name: 'Paul', exp: refreshTime }, tempSign.refreshTokenSecret);
-  // const tokenList = jwt.sign({ id: data.email, name: 'Paul' }, tempSign.secret);
+  const uniq = uniqid();
+  const token = jwt.sign({ id: data.email, name: 'Paul', exp: eXp }, 'supersecret');
+  const refresh = ({ id: uniq }); // ид рефреш токена
   const response = {
     act: token,
     rft: refresh,
-    exp: accesTime,
+    exp: eXp, // время жизни токена. с конфиг файла
   };
   tokenList[token] = response;
-  // tokenList[refresh] = response; ??
+  // console.log(response);
   return response;
 };
 
@@ -99,12 +97,13 @@ const checkAccessToken = async (req, res) => {
     let status = '';
 
     // console.log(checkToken.exp);
-    // console.log(checkToken);
+    // const tesss = Math.floor(Date.now() / 1000);
+    // console.log(tesss);
 
     if (Date.now() >= checkToken.exp * 1000) {
       /* раскодируем токен, вытянем данные юзверга */
       let user = '';
-      const jwtS = await jwt.verify(checkToken.act, tempSign.secret, (err, decoded) => {
+      const jwtS = await jwt.verify(checkToken.act, 'supersecret', (err, decoded) => {
         if (err) {
           /* просроченый токен, собираем данные юзера */
           const dec = jwt.decode(checkToken.act, { complete: true });

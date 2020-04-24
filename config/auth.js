@@ -7,6 +7,7 @@ const env = process.env.NODE_ENV;
 const getKeyDir = () => {
   // По умолчанию, для тестов, в сервисе авторизации лежат дев ключи
   const devKeysDir = path.resolve(__dirname, '../../Auth/keys');
+  console.log(devKeysDir);
   // Но отдельным енвейроментом KEYS_DIR можно установить другую папку
   const envKeysDir = process.env.KEYS_DIR;
 
