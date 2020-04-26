@@ -1,9 +1,12 @@
 const uniqid = require('uniqid');
 const jwt = require('jsonwebtoken');
 const axios = require('axios');
-// const tempSign = require('../config/tempSign');
-// const CookieModel = require('../models/cookie.js');
+const tempSign = require('../config/tempSign');
 
+const sEcret = tempSign.getJwtList().secret;
+// const eXp = tempSign.getJwtList().exp;
+
+// const CookieModel = require('../models/cookie.js');
 module.exports.index = async function (req, res) {
   res.render('index', { title: 'Auth N_60'});
 };
@@ -16,18 +19,20 @@ function checkCretential(data) {
   return false;
 }
 
+let tempRefreshId = ''; // хранилище ид для дальнейшей проверки. Конечно, все это нужно хранить в коллекции
 /* Подписываем AccessToken */
 const setToken = async (data) => {
   const eXp = Math.floor(Date.now() / 1000) + (10);
   const tokenList = {};
   const uniq = uniqid();
-  const token = jwt.sign({ id: data.email, name: 'Paul', exp: eXp }, 'supersecret');
+  const token = jwt.sign({ id: data.email, name: 'Paul', exp: eXp }, sEcret);
   const refresh = ({ id: uniq }); // ид рефреш токена
   const response = {
     act: token,
     rft: refresh,
     exp: eXp, // время жизни токена. с конфиг файла
   };
+  tempRefreshId = refresh;
   tokenList[token] = response;
   // console.log(response);
   return response;
@@ -95,15 +100,11 @@ const checkAccessToken = async (req, res) => {
     }
     let mess = '';
     let status = '';
-
-    // console.log(checkToken.exp);
-    // const tesss = Math.floor(Date.now() / 1000);
-    // console.log(tesss);
-
+    // console.log(`${checkToken.rft.id} + ${tempRefreshId.id}`);
     if (Date.now() >= checkToken.exp * 1000) {
       /* раскодируем токен, вытянем данные юзверга */
       let user = '';
-      const jwtS = await jwt.verify(checkToken.act, 'supersecret', (err, decoded) => {
+      const jwtS = await jwt.verify(checkToken.act, sEcret, (err, decoded) => {
         if (err) {
           /* просроченый токен, собираем данные юзера */
           const dec = jwt.decode(checkToken.act, { complete: true });
@@ -115,7 +116,7 @@ const checkAccessToken = async (req, res) => {
         }
       });
       /* если ошибка - обновить токен */
-      if (status.data === false) {
+      if (status.data === false && checkToken.rft.id === tempRefreshId.id) {
         const updateToken = await setToken(user);
         res.cookie('accessToken', updateToken, { httpOnly: true });
         mess = 'Токен обновлен';
